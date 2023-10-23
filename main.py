@@ -119,7 +119,7 @@ text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=20
 if query:
     query_button = st.button("実行")
 
-    if query_button or ('download_clicked' in st.session_state and st.session_state.download_clicked) or summarize_button:
+    if query_button or ('download_clicked' in st.session_state and st.session_state.download_clicked):
         with st.spinner("..."):
             # クエリが実行された場合のみ新しいレスポンスを取得
             if query_button:
@@ -147,7 +147,7 @@ if query:
             overall_summary = create_overall_summary(st.session_state.all_responses)
             st.session_state.overall_summary = overall_summary
             st.subheader("総合的な要約")
-            st.write(overall_summary)
+            st.code(overall_summary)
             if st.download_button("総合的な要約をダウンロード⬇️csv", overall_summary):
                 st.session_state.download_clicked = True
             else:

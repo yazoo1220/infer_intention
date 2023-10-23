@@ -115,7 +115,7 @@ if query:
             markdown_content = "\n\n".join(responses)
             st.markdown(markdown_content)
             if st.button("Copy All"):
-            st.write("Text copied to clipboard:", markdown_content)
+                st.write("Text copied to clipboard:", markdown_content)
 
 
 

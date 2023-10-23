@@ -142,7 +142,7 @@ if query:
             st.session_state.download_clicked = False
             
         summarize_button = st.button("総合的な要約を作成")
-    　　 if summarize_button:
+        if summarize_button:
             overall_summary = create_overall_summary(st.session_state.all_responses)
             st.session_state.overall_summary = overall_summary
             st.subheader("総合的な要約")

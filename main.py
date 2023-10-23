@@ -110,13 +110,21 @@ if query:
 
     if query_button:
         with st.spinner("..."):
-            responses = infer_intention_from_keyword(query, top_k)
-            responses = [res.content for res in responses]
-            markdown_content = "\n\n".join(responses)
-            st.markdown(markdown_content)
-            if st.button("Copy All"):
-                st.write("Text copied to clipboard:", markdown_content)
+            new_responses = infer_intention_from_keyword(query, top_k)
+            new_responses = [res.content for res in new_responses]
 
+            # session_stateにresponsesのリストが存在しない場合、新しいリストを作成
+            if 'all_responses' not in st.session_state:
+                st.session_state.all_responses = []
+
+            # 新しいresponsesを既存のリストに追加
+            st.session_state.all_responses.extend(new_responses)
+
+            # 全てのresponsesを表示
+            content = "\n\n".join(st.session_state.all_responses)
+            st.code(content)
+
+            st.download_button("⬇️csv",content)
 
 
 # def suggest_outline_from_intention(intention):

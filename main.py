@@ -108,23 +108,27 @@ text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=20
 if query:
     query_button = st.button("実行")
 
-    if query_button:
+    # session_stateにresponsesのリストが存在しない場合、新しいリストを作成
+    if 'all_responses' not in st.session_state:
+        st.session_state.all_responses = []
+
+    if query_button or ('download_clicked' in st.session_state and st.session_state.download_clicked):
         with st.spinner("..."):
-            new_responses = infer_intention_from_keyword(query, top_k)
-            new_responses = [res.content for res in new_responses]
-
-            # session_stateにresponsesのリストが存在しない場合、新しいリストを作成
-            if 'all_responses' not in st.session_state:
-                st.session_state.all_responses = []
-
-            # 新しいresponsesを既存のリストに追加
-            st.session_state.all_responses.extend(new_responses)
+            if query_button:  # 新しいクエリが実行された場合のみresponsesを取得
+                new_responses = infer_intention_from_keyword(query, top_k)
+                new_responses = [res.content for res in new_responses]
+                st.session_state.all_responses.extend(new_responses)
 
             # 全てのresponsesを表示
             content = "\n\n".join(st.session_state.all_responses)
             st.code(content)
 
-            st.download_button("⬇️csv",content)
+            # ダウンロードボタンがクリックされたことをsession_stateでトラック
+            if st.download_button("⬇️csv", content):
+                st.session_state.download_clicked = True
+            else:
+                st.session_state.download_clicked = False
+
 
 
 # def suggest_outline_from_intention(intention):

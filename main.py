@@ -93,7 +93,8 @@ def infer_intention_from_keyword(keyword, k=2):
 
 
 # title
-st.title('🔍 検索意図分析ツール')
+st.title('🔍 検索意図逆算ツール')
+st.markdown('検索結果の上位の内容を要約し、検索者の意図を測るための要素を抽出します')
 
 # Fetch URLs to analyze
 search = SerpAPIWrapper()
@@ -105,8 +106,12 @@ llm = ChatOpenAI(temperature=0, model='gpt-3.5-turbo')
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=20)
 
 if query:
-    res = infer_intention_from_keyword(query, top_k)
-    st.markdown(res)
+    query_button = st.button("実行")
+
+if query_button:
+    with st.spinner:
+        res = infer_intention_from_keyword(query, top_k)
+        st.markdown(res)
 
 
 # def suggest_outline_from_intention(intention):

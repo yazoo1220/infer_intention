@@ -109,7 +109,7 @@ if query:
     query_button = st.button("実行")
 
 if query_button:
-    with st.spinner:
+    with st.spinner("..."):
         res = infer_intention_from_keyword(query, top_k)
         st.markdown(res)
 

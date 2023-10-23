@@ -113,9 +113,8 @@ if query:
             new_responses = infer_intention_from_keyword(query, top_k)
             new_responses = [res.content for res in new_responses]
             
-            # 新しいresponsesを既存のリストに追加
-            if 'all_responses' not in st.session_state:
-                st.session_state.all_responses = []
+            # "実行"ボタンがクリックされた場合、responsesをリセット
+            st.session_state.all_responses = []
             st.session_state.all_responses.extend(new_responses)
 
     # 全てのresponsesを表示
@@ -124,7 +123,6 @@ if query:
         st.code(content)
 
         st.download_button("⬇️csv", content)
-
 
 
 # def suggest_outline_from_intention(intention):

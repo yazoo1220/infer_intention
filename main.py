@@ -130,26 +130,29 @@ if query:
                 st.session_state.all_responses = formatted_responses
                 
 
-            # 総合的な要約を生成
-            if summarize_button:
-                overall_summary = create_overall_summary(st.session_state.all_responses)
-                st.session_state.overall_summary = overall_summary
-                st.subheader("総合的な要約")
-                st.write(overall_summary)
-                if st.download_button("総合的な要約をダウンロード⬇️csv", overall_summary):
-                    st.session_state.download_clicked = True
-                else:
-                    st.session_state.download_clicked = False
-
+            
     # 全てのresponsesを表示
     if 'all_responses' in st.session_state:
         all_content = "\n\n".join(st.session_state.all_responses)
         st.code(all_content)
-        summarize_button = st.button("総合的な要約を作成")
+        
         if st.download_button("すべてのレスポンスをダウンロード⬇️csv", all_content):
             st.session_state.download_clicked = True
         else:
             st.session_state.download_clicked = False
+
+　　　　　# 総合的な要約を生成
+        summarize_button = st.button("総合的な要約を作成")
+    　　 if summarize_button:
+            overall_summary = create_overall_summary(st.session_state.all_responses)
+            st.session_state.overall_summary = overall_summary
+            st.subheader("総合的な要約")
+            st.write(overall_summary)
+            if st.download_button("総合的な要約をダウンロード⬇️csv", overall_summary):
+                st.session_state.download_clicked = True
+            else:
+                st.session_state.download_clicked = False
+
 
 
 # def suggest_outline_from_intention(intention):

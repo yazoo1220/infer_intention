@@ -19,6 +19,7 @@ from langchain.prompts.chat import ChatPromptTemplate
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 import streamlit as st
 
+@st.cache(suppress_st_warning=True, show_spinner=False)
 def get_top_urls(keyword, k=2):
     '''
     Get top k urls and titles from the search result of the keyword
@@ -27,6 +28,7 @@ def get_top_urls(keyword, k=2):
     results = [{'link': r['link'], 'title': r['title']} for r in res['organic_results'][:k]]
     return results
 
+@st.cache(suppress_st_warning=True, show_spinner=False)
 def get_summary_by_url(url):
   loader = WebBaseLoader(url)
   docs = loader.load()
@@ -42,6 +44,7 @@ def get_summary_by_url(url):
   summary = summary_chain.run(texts[:length])
   return summary
 
+@st.cache(suppress_st_warning=True, show_spinner=False)
 def infer_intention_from_summary(keyword, summary):
   prompt = ChatPromptTemplate.from_messages([(
       "system",

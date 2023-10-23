@@ -110,8 +110,13 @@ if query:
 
     if query_button:
         with st.spinner("..."):
-            res = infer_intention_from_keyword(query, top_k)
-            st.markdown(res)
+            responses = infer_intention_from_keyword(query, top_k)
+            responses = [res['content'] for res in responses]
+            markdown_content = "\n\n".join(responses)
+            st.markdown(markdown_content)
+            if st.button("Copy All"):
+            st.write("Text copied to clipboard:", markdown_content)
+
 
 
 # def suggest_outline_from_intention(intention):

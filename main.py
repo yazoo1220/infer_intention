@@ -16,7 +16,7 @@ from langchain.chat_models import ChatOpenAI
 from langchain.document_loaders import WebBaseLoader
 from langchain.chains.summarize import load_summarize_chain
 from langchain.prompts.chat import ChatPromptTemplate
-from langchain.text_splitter import RecursiveTextSplitter
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 import streamlit as st
 
 def get_top_urls(keyword, k=2):
@@ -102,7 +102,7 @@ top_k = st.slider('表示する結果', 1, 5, 2)
 
 # Create an instance of the RecursiveCharacterTextSplitter
 llm = ChatOpenAI(temperature=0, model='gpt-3.5-turbo')
-text_splitter = RecursiveTextSplitter(chunk_size=1000, chunk_overlap=20)
+text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=20)
 
 if query:
     res = infer_intention_from_keyword(query, top_k)

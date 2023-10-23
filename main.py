@@ -108,10 +108,10 @@ text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=20
 if query:
     query_button = st.button("実行")
 
-if query_button:
-    with st.spinner("..."):
-        res = infer_intention_from_keyword(query, top_k)
-        st.markdown(res)
+    if query_button:
+        with st.spinner("..."):
+            res = infer_intention_from_keyword(query, top_k)
+            st.markdown(res)
 
 
 # def suggest_outline_from_intention(intention):

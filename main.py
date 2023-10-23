@@ -20,12 +20,12 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 import streamlit as st
 
 def get_top_urls(keyword, k=2):
-  '''
-  Get top k urls from the search result of the keyword
-  '''
-  res = search.results(keyword)
-  urls = list(map(lambda x: x['link'], res['organic_results'][:k]))
-  return urls
+    '''
+    Get top k urls and titles from the search result of the keyword
+    '''
+    res = search.results(keyword)
+    results = [{'link': r['link'], 'title': r['title']} for r in res['organic_results'][:k]]
+    return results
 
 def get_summary_by_url(url):
   loader = WebBaseLoader(url)
@@ -74,22 +74,22 @@ def infer_intention_from_summary(keyword, summary):
   return intention
 
 def infer_intention_from_keyword(keyword, k=2):
-  urls = get_top_urls(keyword, k)
-  print('urls are fetched')
-  summaries = []
-  for url in urls:
-    print('summarizing ' + url)
-    summary = get_summary_by_url(url)
-    summaries.append(summary)
-  print(summaries)
+    results = get_top_urls(keyword, k)
+    print('URLs and titles are fetched')
+    summaries = []
+    for result in results:
+        print('summarizing ' + result['link'])
+        summary = get_summary_by_url(result['link'])
+        summaries.append({'url': result['link'], 'title': result['title'], 'summary': summary})
+    print(summaries)
 
-  intentions = []
-  for summary in summaries:
-    intention = infer_intention_from_summary(keyword, summary)
-    print(intention)
-    intentions.append(intention)
+    intentions = []
+    for summary in summaries:
+        intention = infer_intention_from_summary(keyword, summary['summary'])
+        print(intention)
+        intentions.append({'url': summary['url'], 'title': summary['title'], 'intention': intention.content})
 
-  return intentions
+    return intentions
 
 
 # title
@@ -111,18 +111,21 @@ if query:
     if query_button:
         with st.spinner("..."):
             new_responses = infer_intention_from_keyword(query, top_k)
-            new_responses = [res.content for res in new_responses]
+            formatted_responses = []
+            for res in new_responses:
+                formatted_responses.append(f"URL: {res['url']}\nTitle: {res['title']}\n\n{res['intention']}")
             
             # "実行"ボタンがクリックされた場合、responsesをリセット
             st.session_state.all_responses = []
-            st.session_state.all_responses.extend(new_responses)
+            st.session_state.all_responses.extend(formatted_responses)
 
     # 全てのresponsesを表示
     if 'all_responses' in st.session_state:
-        content = "\n\n".join(st.session_state.all_responses)
-        st.code(content)
-
-        st.download_button("⬇️csv", content)
+        for idx, content in enumerate(st.session_state.all_responses, 1):
+            with st.expander(f"Result {idx}"):
+                st.code(content)
+        all_content = "\n\n".join(st.session_state.all_responses)
+        st.download_button("⬇️", all_content)
 
 
 # def suggest_outline_from_intention(intention):

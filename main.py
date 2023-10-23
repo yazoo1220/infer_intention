@@ -104,8 +104,9 @@ top_k = st.slider('表示する結果', 1, 5, 2)
 llm = ChatOpenAI(temperature=0, model='gpt-3.5-turbo')
 text_splitter = RecursiveTextSplitter(chunk_size=1000, chunk_overlap=20)
 
-res = infer_intention_from_keyword(query, top_k)
-st.markdown(res)
+if query:
+    res = infer_intention_from_keyword(query, top_k)
+    st.markdown(res)
 
 
 # def suggest_outline_from_intention(intention):

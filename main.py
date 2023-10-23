@@ -121,7 +121,7 @@ if query:
 
     # 全てのresponsesを表示
     if 'all_responses' in st.session_state:
-        all_content = "\n\n".join(st.session_state.all_responses)
+        all_content = "\n********\n".join(st.session_state.all_responses)
         st.code(all_content)
         st.download_button("⬇️", all_content)
 

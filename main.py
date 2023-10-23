@@ -118,7 +118,6 @@ text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=20
 
 if query:
     query_button = st.button("実行")
-    summarize_button = st.button("総合的な要約を作成")
 
     if query_button or ('download_clicked' in st.session_state and st.session_state.download_clicked) or summarize_button:
         with st.spinner("..."):
@@ -129,6 +128,7 @@ if query:
                 for res in new_responses:
                     formatted_responses.append(f"URL: {res['url']}\nTitle: {res['title']}\n\n{res['intention']}")
                 st.session_state.all_responses = formatted_responses
+                
 
             # 総合的な要約を生成
             if summarize_button:
@@ -145,6 +145,7 @@ if query:
     if 'all_responses' in st.session_state:
         all_content = "\n\n".join(st.session_state.all_responses)
         st.code(all_content)
+        summarize_button = st.button("総合的な要約を作成")
         if st.download_button("すべてのレスポンスをダウンロード⬇️csv", all_content):
             st.session_state.download_clicked = True
         else:

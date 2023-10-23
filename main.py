@@ -91,6 +91,13 @@ def infer_intention_from_keyword(keyword, k=2):
 
     return intentions
 
+def synthesize_summary(responses):
+    """responsesの内容を総合的に要約する関数"""
+    combined_text = "\n".join(responses)
+    synthesis_chain = load_summarize_chain(llm, chain_type="map_reduce")
+    synthesized_summary = synthesis_chain.run([combined_text])
+    return synthesized_summary[0]
+
 
 # title
 st.title('🔍 検索意図逆算ツール')
@@ -105,25 +112,43 @@ top_k = st.slider('表示する結果', 1, 5, 2)
 llm = ChatOpenAI(temperature=0, model='gpt-3.5-turbo')
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=20)
 
+# ...
+
+# ...
+
 if query:
     query_button = st.button("実行")
+    summarize_button = st.button("総合的な要約を作成")
 
-    if query_button:
+    if query_button or ('download_clicked' in st.session_state and st.session_state.download_clicked) or summarize_button:
         with st.spinner("..."):
-            new_responses = infer_intention_from_keyword(query, top_k)
-            formatted_responses = []
-            for res in new_responses:
-                formatted_responses.append(f"URL: {res['url']}\nTitle: {res['title']}\n\n{res['intention']}")
-            
-            # "実行"ボタンがクリックされた場合、responsesをリセット
-            st.session_state.all_responses = []
-            st.session_state.all_responses.extend(formatted_responses)
+            # クエリが実行された場合のみ新しいレスポンスを取得
+            if query_button:
+                new_responses = infer_intention_from_keyword(query, top_k)
+                formatted_responses = []
+                for res in new_responses:
+                    formatted_responses.append(f"URL: {res['url']}\nTitle: {res['title']}\n\n{res['intention']}")
+                st.session_state.all_responses = formatted_responses
+
+            # 総合的な要約を生成
+            if summarize_button:
+                overall_summary = create_overall_summary(st.session_state.all_responses)
+                st.session_state.overall_summary = overall_summary
+                st.subheader("総合的な要約")
+                st.write(overall_summary)
+                if st.download_button("総合的な要約をダウンロード⬇️csv", overall_summary):
+                    st.session_state.download_clicked = True
+                else:
+                    st.session_state.download_clicked = False
 
     # 全てのresponsesを表示
     if 'all_responses' in st.session_state:
-        all_content = "\n********\n".join(st.session_state.all_responses)
+        all_content = "\n\n".join(st.session_state.all_responses)
         st.code(all_content)
-        st.download_button("⬇️", all_content)
+        if st.download_button("すべてのレスポンスをダウンロード⬇️csv", all_content):
+            st.session_state.download_clicked = True
+        else:
+            st.session_state.download_clicked = False
 
 
 # def suggest_outline_from_intention(intention):

@@ -111,7 +111,7 @@ if query:
     if query_button:
         with st.spinner("..."):
             responses = infer_intention_from_keyword(query, top_k)
-            responses = [res['content'] for res in responses]
+            responses = [res.content for res in responses]
             markdown_content = "\n\n".join(responses)
             st.markdown(markdown_content)
             if st.button("Copy All"):
